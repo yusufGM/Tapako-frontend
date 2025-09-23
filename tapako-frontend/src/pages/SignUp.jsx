@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { api } from "../lib/api";
+import { apiPost } from "../lib/api";
 
 const SignUp = () => {
   const [username, setUsername] = useState('');
@@ -13,45 +13,27 @@ const SignUp = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(api('/signup'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        toast.success('Pendaftaran berhasil!');
-        navigate('/login');
-      } else {
-        toast.error(data.error || 'Gagal daftar.');
-      }
-    } catch {
-      toast.error('Terjadi kesalahan saat mendaftar.');
+      await apiPost('/signup', { username, email, password });
+      toast.success('Pendaftaran berhasil!');
+      navigate('/login');
+    } catch (err) {
+      toast.error(err?.payload?.error || 'Gagal daftar.');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form onSubmit={handleSignup} className="bg-white p-8 rounded shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-6 text-center">Signup</h2>
-        <div className="mb-4">
-          <label htmlFor="username" className="block text-sm font-semibold mb-1">Username</label>
-          <input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required className="w-full border px-3 py-2 rounded" />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <form onSubmit={handleSignup} className="w-full max-w-md bg-white rounded-xl shadow p-6 space-y-4">
+        <h1 className="text-xl font-semibold">Daftar</h1>
+        <input className="input input-bordered w-full" placeholder="Username" value={username} onChange={(e)=>setUsername(e.target.value)} />
+        <input className="input input-bordered w-full" placeholder="Email" type="email" value={email} onChange={(e)=>setEmail(e.target.value)} />
+        <div className="relative">
+          <input className="input input-bordered w-full" placeholder="Password" type={showPassword ? "text" : "password"} value={password} onChange={(e)=>setPassword(e.target.value)} />
+          <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" onClick={()=>setShowPassword((s)=>!s)}>
+            {showPassword ? "Sembunyikan" : "Lihat"}
+          </button>
         </div>
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-semibold mb-1">Email</label>
-          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full border px-3 py-2 rounded" />
-        </div>
-        <div className="mb-6">
-          <label htmlFor="password" className="block text-sm font-semibold mb-1">Password</label>
-          <div className="relative">
-            <input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full border px-3 py-2 rounded" />
-            <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-gray-600">
-              {showPassword ? 'Sembunyikan' : 'Lihat'}
-            </button>
-          </div>
-        </div>
-        <button type="submit" className="w-full bg-green-600 text-white font-semibold py-2 rounded hover:bg-green-700">Daftar</button>
+        <button className="btn w-full bg-black text-white">Daftar</button>
       </form>
     </div>
   );

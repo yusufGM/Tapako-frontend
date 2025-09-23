@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
-import useCartStore from './store/UseCartStore';
-import useUserStore from './store/UseUserStore';
+import useCartStore from './store/useCartStore';
+import useUserStore from './store/useUserStore';
 
 const Header = () => {
   const { openDrawer, cart = [] } = useCartStore();

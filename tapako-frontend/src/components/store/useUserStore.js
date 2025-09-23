@@ -9,7 +9,8 @@ const useUserStore = create(
       userId: null,
       role: null,
       email: null,
-      setUser: ({ token, username, userId, role, email }) => set({ token, username, userId, role, email }),
+      setUser: ({ token, username, userId, role, email }) =>
+        set({ token, username, userId, role, email }),
       clearUser: () => set({ token: null, username: null, userId: null, role: null, email: null }),
     }),
     { name: 'user-auth' }

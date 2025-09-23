@@ -1,14 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { useLocation } from 'react-router-dom';
-
-let locationGetter; 
-
-
-export const usePathListener = () => {
-  const location = useLocation();
-  locationGetter = location.pathname;
-};
 
 const useCartStore = create(
   persist(
@@ -16,7 +7,7 @@ const useCartStore = create(
       isOpen: false,
       cart: [],
 
-      openDrawer: () => set((state) => (locationGetter === '/login' ? state : { isOpen: true })),
+      openDrawer: () => set({ isOpen: true }),
       closeDrawer: () => set({ isOpen: false }),
 
       addToCart: (product) => set((state) => {
@@ -33,7 +24,12 @@ const useCartStore = create(
         return { cart: arr };
       }),
 
-      removeItem: (index) => set((state) => { const arr = [...state.cart]; arr.splice(index, 1); return { cart: arr }; }),
+      removeItem: (index) => set((state) => {
+        const arr = [...state.cart];
+        arr.splice(index, 1);
+        return { cart: arr };
+      }),
+
       removeFromCart: (id) => set((state) => ({ cart: state.cart.filter((i) => i._id !== id) })),
       clearCart: () => set({ cart: [] }),
     }),

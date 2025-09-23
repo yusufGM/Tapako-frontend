@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import useCartStore from "./store/UseCartStore";
-import useUserStore from "./store/UseUserStore";
+import useCartStore from "./store/useCartStore";
+import useUserStore from "./store/useUserStore";
 import { toast } from "sonner"; 
 
 function CartDrawer() {

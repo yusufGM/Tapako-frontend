@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import useUserStore from '../components/store/useUserStore';
+import { apiPost } from '../lib/api';
 
 const AdminAddProduct = () => {
   const [title, setTitle] = useState('');
@@ -6,6 +8,10 @@ const AdminAddProduct = () => {
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Sepatu');
+  const [loading, setLoading] = useState(false);
+
+  const { token } = useUserStore();
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,13 +25,8 @@ const AdminAddProduct = () => {
     };
 
     try {
-      const res = await fetch('http://localhost:5000/items', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newItem),
-      });
-
-      if (!res.ok) throw new Error('Gagal menambahkan produk');
+      setLoading(true);
+      await apiPost('/items', newItem, { headers: { ...authHeader } });
       alert('Produk berhasil ditambahkan');
       setTitle('');
       setImage('');
@@ -33,7 +34,9 @@ const AdminAddProduct = () => {
       setDescription('');
       setCategory('Sepatu');
     } catch (err) {
-      alert(err.message);
+      alert(err?.payload?.error || err.message || 'Gagal menambahkan produk');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,7 +54,9 @@ const AdminAddProduct = () => {
           <option value="Running">Running</option>
           <option value="Formal">Formal</option>
         </select>
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">Simpan Produk</button>
+        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded disabled:opacity-60" disabled={loading}>
+          {loading ? 'Menyimpan...' : 'Simpan Produk'}
+        </button>
       </form>
     </div>
   );

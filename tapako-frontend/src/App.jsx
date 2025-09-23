@@ -3,8 +3,8 @@ import { Suspense, lazy, useEffect } from 'react';
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
 import CartDrawer from './components/CartDrawer.jsx';
-import useUserStore from './components/store/UseUserStore.js';
-import useCartStore, { usePathListener } from './components/store/UseCartStore.js';
+import useUserStore from './components/store/useUserStore.js';
+import useCartStore from './components/store/useCartStore.js';
 import ScrollToTop from './components/ui/ScrollToTop.jsx';
 import ProductDetail from './pages/ProductDetail.jsx';
 import { Toaster } from 'sonner';
@@ -36,10 +36,10 @@ const Spinner = () => (
 );
 
 export default function App() {
-  usePathListener();
   const location = useLocation();
   const closeDrawer = useCartStore((s) => s.closeDrawer);
 
+  // tutup drawer setiap kali pindah halaman
   useEffect(() => {
     closeDrawer();
   }, [location.pathname, closeDrawer]);
@@ -55,12 +55,26 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
+          <Route
+            path="/checkout"
+            element={
+              <PrivateRoute>
+                <CheckoutPage />
+              </PrivateRoute>
+            }
+          />
           <Route path="/success" element={<SuccessPage />} />
           <Route path="/store" element={<StorePage />} />
           <Route path="/sale" element={<SalePage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

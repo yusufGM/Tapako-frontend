@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import ProductList from '../components/ProductList';
 import { useFilterStore } from '../components/store/filterStore';
-import { api } from '../lib/api';
+import api from '../lib/api';
 
 const SkeletonCard = () => (
   <div className="max-w-xs bg-white rounded-xl shadow-md overflow-hidden animate-pulse">
@@ -28,12 +28,10 @@ function StorePage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(api('/items'));
-        if (!response.ok) throw new Error('Failed to fetch products');
-        const data = await response.json();
+        const data = await api.get('/items');
         setProducts(Array.isArray(data) ? data : []);
       } catch (err) {
-        setError(err.message);
+        setError(err.message || 'Failed to fetch products');
       } finally {
         setLoading(false);
       }
@@ -46,7 +44,7 @@ function StorePage() {
     [products]
   );
 
-  let filtered = useMemo(() => {
+  const filtered = useMemo(() => {
     let list =
       selectedCategory === 'All' ? products : products.filter((p) => p.category === selectedCategory);
 
@@ -111,93 +109,6 @@ function StorePage() {
       </header>
 
       <div className="container mx-auto px-4 py-6 flex gap-6">
-        <aside className="hidden md:block w-64 flex-shrink-0">
-          <div className="sticky top-28">
-            <div className="bg-white rounded-lg shadow p-4 max-h-[80vh] overflow-y-auto space-y-6">
-              <div>
-                <h2 className="font-semibold text-lg mb-3">Categories</h2>
-                <ul className="space-y-2">
-                  {categories.map((cat) => (
-                    <li key={cat}>
-                      <button
-                        className={`text-left w-full px-2 py-1 rounded transition-colors ${
-                          selectedCategory === cat ? 'bg-black text-white' : 'hover:bg-gray-100'
-                        }`}
-                        onClick={() => setSelectedCategory(cat)}
-                      >
-                        {cat}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h2 className="font-semibold text-lg mb-3">Filters</h2>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block font-medium mb-1">Gender</label>
-                    <select
-                      value={filters.gender}
-                      onChange={(e) => setFilter('gender', e.target.value)}
-                      className="w-full border rounded px-2 py-1"
-                    >
-                      <option value="all">All</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="unisex">Unisex</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block font-medium mb-1">Age Group</label>
-                    <select
-                      value={filters.ageGroup}
-                      onChange={(e) => setFilter('ageGroup', e.target.value)}
-                      className="w-full border rounded px-2 py-1"
-                    >
-                      <option value="all">All</option>
-                      <option value="adult">Adult</option>
-                      <option value="child">Child</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block font-medium mb-1">Urutkan Harga</label>
-                    <select
-                      value={filters.price}
-                      onChange={(e) => setFilter('price', e.target.value)}
-                      className="w-full border rounded px-2 py-1"
-                    >
-                      <option value="none">Default</option>
-                      <option value="low-high">Rendah → Tinggi</option>
-                      <option value="high-low">Tinggi → Rendah</option>
-                    </select>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span>Sale & Offers</span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={filters.sale}
-                        onChange={() => toggleFilter('sale')}
-                      />
-                      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-black relative">
-                        <div
-                          className={`absolute top-[2px] left-[2px] h-5 w-5 bg-white border border-gray-300 rounded-full transition-all ${
-                            filters.sale ? 'translate-x-5' : ''
-                          }`}
-                        />
-                      </div>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </aside>
 
         <main ref={mainRef} className="flex-1 overflow-y-auto pr-2">
           {loading ? (

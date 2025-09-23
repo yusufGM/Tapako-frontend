@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import useCartStore from "../components/store/UseCartStore";
+import useCartStore from "../components/store/useCartStore";
 import { toast } from "sonner";
-import { api } from "../lib/api";
+import api from "../lib/api";
 
 const safeSrc = (src) => src || '/fallback.png';
 
@@ -14,17 +14,17 @@ function ProductDetail() {
   const addToCart = useCartStore((s) => s.addToCart);
 
   useEffect(() => {
+    let mounted = true;
     setLoading(true);
-    Promise.all([
-      fetch(api(`/items/${id}`)).then((r) => r.json()),
-      fetch(api('/items')).then((r) => r.json()),
-    ])
+    Promise.all([api.get(`/items/${id}`), api.get('/items')])
       .then(([p, items]) => {
+        if (!mounted) return;
         setProduct(p);
         setOther((Array.isArray(items) ? items : []).filter((x) => x._id !== id));
       })
       .catch(() => {})
-      .finally(() => setLoading(false));
+      .finally(() => mounted && setLoading(false));
+    return () => { mounted = false; };
   }, [id]);
 
   if (loading) return <p className="text-center py-10 text-xl font-semibold">Memuat...</p>;

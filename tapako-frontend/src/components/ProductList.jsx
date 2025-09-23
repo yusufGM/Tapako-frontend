@@ -1,4 +1,4 @@
-import useCartStore from "./store/UseCartStore";
+import useCartStore from "./store/useCartStore";
 import { Link } from "react-router-dom";
 
 const FallbackImg = (props) => (
