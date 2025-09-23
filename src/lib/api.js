@@ -51,11 +51,11 @@ const api = {
       ...options
     });
     return handleResponse(res);
-  }
+  },
 };
 
-export default api;
 export const apiGet = api.get;
 export const apiPost = api.post;
 export const apiPut = api.put;
 export const apiDelete = api.delete;
+export default api;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import useUserStore from '../components/store/useUserStore';
-import { apiPost } from '../lib/api';
+import useUserStore from '../../components/store/useUserStore';
+import { apiPost } from '../../lib/api';
 
 const AdminAddProduct = () => {
   const [title, setTitle] = useState('');
