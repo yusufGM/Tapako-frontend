@@ -39,7 +39,6 @@ export default function App() {
   const location = useLocation();
   const closeDrawer = useCartStore((s) => s.closeDrawer);
 
-  // tutup drawer setiap kali pindah halaman
   useEffect(() => {
     closeDrawer();
   }, [location.pathname, closeDrawer]);
