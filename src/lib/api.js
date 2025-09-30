@@ -1,6 +1,11 @@
-const API_BASE =
-  (import.meta.env.VITE_API_BASE?.replace(/\/$/, "")) ||
-  "https://tapako-backend.vercel.app/api";
+const RAW_BASE = import.meta.env.VITE_API_BASE || "https://tapako-backend.vercel.app";
+const BASE_URL = RAW_BASE.replace(/\/+$/, "");
+
+function joinURL(base, path) {
+  if (!path) return base;
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return `${base}${p}`;
+}
 
 async function handleResponse(res) {
   if (res.ok) {
@@ -16,42 +21,24 @@ async function handleResponse(res) {
   throw error;
 }
 
+async function request(path, { method = "GET", headers = {}, body } = {}) {
+  const url = joinURL(BASE_URL, path);
+  const init = {
+    method,
+    headers: { "Content-Type": "application/json", ...headers },
+  };
+  if (body !== undefined) init.body = JSON.stringify(body);
+  const res = await fetch(url, init);
+  return handleResponse(res);
+}
+
 const api = {
-  baseURL: API_BASE,
-  get: async (path, options = {}) => {
-    const res = await fetch(`${API_BASE}${path}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-      ...options
-    });
-    return handleResponse(res);
-  },
-  post: async (path, body, options = {}) => {
-    const res = await fetch(`${API_BASE}${path}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-      body: JSON.stringify(body),
-      ...options
-    });
-    return handleResponse(res);
-  },
-  put: async (path, body, options = {}) => {
-    const res = await fetch(`${API_BASE}${path}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-      body: JSON.stringify(body),
-      ...options
-    });
-    return handleResponse(res);
-  },
-  delete: async (path, options = {}) => {
-    const res = await fetch(`${API_BASE}${path}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-      ...options
-    });
-    return handleResponse(res);
-  },
+  baseURL: BASE_URL,
+  get: (path, options = {}) => request(path, { method: "GET", ...options }),
+  post: (path, body, options = {}) => request(path, { method: "POST", body, ...options }),
+  put: (path, body, options = {}) => request(path, { method: "PUT", body, ...options }),
+  patch: (path, body, options = {}) => request(path, { method: "PATCH", body, ...options }),
+  delete: (path, options = {}) => request(path, { method: "DELETE", ...options }),
 };
 
 export const apiGet = api.get;

@@ -11,7 +11,10 @@ const CheckoutPage = () => {
   const [email, setEmail]     = useState('');
   const [phone, setPhone]     = useState('');
 
-  const total = useMemo(() => cart.reduce((sum, item) => sum + (item.price * (item.qty || 1)), 0), [cart]);
+  const total = useMemo(
+    () => cart.reduce((sum, item) => sum + (item.price * (item.qty || 1)), 0),
+    [cart]
+  );
 
   const handlePayment = async () => {
     if (!address || !email || !phone) {
@@ -24,12 +27,14 @@ const CheckoutPage = () => {
     }
 
     try {
-      const data = await apiPost("/checkout",
-        { items: cart, address, email, phone },
+      const data = await apiPost(
+        "/checkout",
+        { items: cart, address, email, whatsapp: phone },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      if (data?.invoice_url) {
-        window.location.href = data.invoice_url;
+
+      if (data?.paymentUrl) {
+        window.location.href = data.paymentUrl;
       } else {
         toast.success("Checkout berhasil");
         clearCart();
@@ -45,10 +50,28 @@ const CheckoutPage = () => {
 
       <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-3">
-          <input className="input input-bordered w-full" placeholder="Alamat lengkap" value={address} onChange={(e)=>setAddress(e.target.value)} />
-          <input className="input input-bordered w-full" placeholder="Email" type="email" value={email} onChange={(e)=>setEmail(e.target.value)} />
-          <input className="input input-bordered w-full" placeholder="No. WhatsApp" value={phone} onChange={(e)=>setPhone(e.target.value)} />
-          <button className="btn w-full bg-black text-white" onClick={handlePayment}>Bayar sekarang</button>
+          <input
+            className="input input-bordered w-full"
+            placeholder="Alamat lengkap"
+            value={address}
+            onChange={(e)=>setAddress(e.target.value)}
+          />
+          <input
+            className="input input-bordered w-full"
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
+          />
+          <input
+            className="input input-bordered w-full"
+            placeholder="No. WhatsApp"
+            value={phone}
+            onChange={(e)=>setPhone(e.target.value)}
+          />
+          <button className="btn w-full bg-black text-white" onClick={handlePayment}>
+            Bayar sekarang
+          </button>
         </div>
 
         <div className="bg-white rounded-xl shadow p-4">

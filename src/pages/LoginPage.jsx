@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import useUserStore from "../components/store/useUserStore";
 import { toast } from "sonner";
 import { apiPost } from "../lib/api";
-import useUserStore from "../components/store/useUserStore";
 
 const LoginPage = () => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { setUser } = useUserStore();
   const navigate = useNavigate();
 
@@ -17,9 +18,9 @@ const LoginPage = () => {
       setUser({
         token: data.token,
         username: data.user?.username,
-        userId: data.user?.id,
-        role: data.user?.role,
-        email: data.user?.email
+        userId: data.user?.id || data.user?._id,
+        role: data.user?.role || "user",
+        email: data.user?.email,
       });
       toast.success("Login berhasil");
       navigate("/");
@@ -29,12 +30,70 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <form onSubmit={handleLogin} className="w-full max-w-md bg-white rounded-xl shadow p-6 space-y-4">
-        <h1 className="text-xl font-semibold">Masuk</h1>
-        <input className="input input-bordered w-full" placeholder="Username atau Email" value={identifier} onChange={(e)=>setIdentifier(e.target.value)} />
-        <input className="input input-bordered w-full" placeholder="Password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} />
-        <button className="btn w-full bg-black text-white">Masuk</button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-8 rounded shadow-md w-full max-w-sm"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+
+        <div className="mb-4">
+          <label
+            htmlFor="identifier"
+            className="block text-sm font-semibold mb-1"
+          >
+            Username atau Email
+          </label>
+          <input
+            id="identifier"
+            type="text"
+            required
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="Masukkan username atau email"
+            className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            autoComplete="username"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label htmlFor="password" className="block text-sm font-semibold mb-1">
+            Password
+          </label>
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full border px-3 py-2 rounded pr-20 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              autoComplete="current-password"
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-gray-600 hover:text-gray-800"
+            >
+              {showPassword ? "Sembunyikan" : "Lihat"}
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition"
+        >
+          Login
+        </button>
+
+        <p className="text-center mt-4 text-sm text-gray-700">
+          Belum punya akun?{" "}
+          <Link to="/signup" className="text-blue-600 hover:underline font-medium">
+            Daftar sekarang
+          </Link>
+        </p>
       </form>
     </div>
   );
