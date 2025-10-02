@@ -114,89 +114,103 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-6 pt-24 pb-10">
+    <div className="max-w-5xl mx-auto px-6 pt-24 pb-10">
       <h1 className="text-2xl font-bold mb-6">Checkout</h1>
 
-      <div className="mb-4">
-        <label className="block mb-1 font-semibold">Nama</label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full h-10 px-3 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
-          placeholder="Nama lengkap"
-          required
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <section>
+          <div className="mb-4">
+            <label className="block mb-1 font-semibold">Nama</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full h-10 px-3 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
+              placeholder="Nama lengkap"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1 font-semibold">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full h-10 px-3 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
+              placeholder="contoh@email.com"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1 font-semibold">Nomor WhatsApp</label>
+            <input
+              type="tel"
+              inputMode="numeric"
+              pattern="0\\d{8,15}"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+              className="w-full h-10 px-3 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
+              placeholder="08xxxxxxxxxx"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Format: 0 di depan, 9–16 digit (contoh: 08**********)
+            </p>
+          </div>
+
+          <div className="mb-0">
+            <label className="block mb-1 font-semibold">Alamat Pengiriman</label>
+            <textarea
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
+              rows={4}
+              required
+            />
+          </div>
+        </section>
+
+        <aside className="md:pl-4">
+          <div className="sticky top-24">
+            <div className="border rounded-lg p-4 bg-white shadow-sm">
+              <h2 className="text-lg font-semibold mb-2">Ringkasan Pesanan</h2>
+              {cart.length === 0 ? (
+                <p className="text-sm text-gray-500">Cart kosong.</p>
+              ) : (
+                <>
+                  <ul className="space-y-2 max-h-72 overflow-auto pr-1">
+                    {cart.map((item) => (
+                      <li
+                        key={item._id || item.id || `${item.name}-${item.qty}`}
+                        className="flex justify-between text-sm"
+                      >
+                        <span>{item.name} × {item.qty || 1}</span>
+                        <span>{formatIDR((Number(item.price) || 0) * (Number(item.qty) || 0))}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-4 flex justify-between font-semibold">
+                    <span>Total</span>
+                    <span>{formatIDR(total)}</span>
+                  </div>
+                  <button
+                    onClick={handlePayment}
+                    disabled={submitting || !cart.length}
+                    className={`mt-4 w-full h-10 text-white rounded transition ${
+                      submitting || !cart.length ? "bg-black/60 cursor-not-allowed" : "bg-black hover:bg-gray-900"
+                    }`}
+                  >
+                    {submitting ? "Memproses..." : "Bayar Sekarang"}
+                  </button>
+                  <p className="text-[10px] text-gray-400 mt-2">Endpoint: {API_BASE}/checkout</p>
+                </>
+              )}
+            </div>
+          </div>
+        </aside>
       </div>
-
-      <div className="mb-4">
-        <label className="block mb-1 font-semibold">Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full h-10 px-3 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
-          placeholder="bob@contoh.com"
-          required
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1 font-semibold">Nomor WhatsApp</label>
-        <input
-          type="tel"
-          inputMode="numeric"
-          pattern="0\\d{8,15}"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value.replace(/[^\\d]/g, ""))}
-          className="w-full h-10 px-3 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
-          placeholder="08xxxxxxxxxx"
-          required
-        />
-        <p className="text-xs text-gray-500 mt-1">Format: 0 di depan, 9–16 digit (contoh: 08**********)</p>
-      </div>
-
-      <div className="mb-6">
-        <label className="block mb-1 font-semibold">Alamat Pengiriman</label>
-        <textarea
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
-          rows={4}
-          required
-        />
-      </div>
-
-      <div className="border-t pt-4 mb-6">
-        <h2 className="text-lg font-semibold mb-2">Ringkasan Pesanan</h2>
-        {cart.length === 0 ? (
-          <p className="text-sm text-gray-500">Cart kosong.</p>
-        ) : (
-          <>
-            <ul className="space-y-2">
-              {cart.map((item) => (
-                <li key={item._id || item.id || `${item.name}-${item.qty}`} className="flex justify-between">
-                  <span>{item.name} × {item.qty || 1}</span>
-                  <span>{formatIDR((Number(item.price) || 0) * (Number(item.qty) || 0))}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4 font-bold text-lg text-right">Total: {formatIDR(total)}</div>
-          </>
-        )}
-      </div>
-
-      <button
-        onClick={handlePayment}
-        disabled={submitting || !cart.length}
-        className={`w-full h-10 text-white rounded transition ${
-          submitting || !cart.length ? "bg-black/60 cursor-not-allowed" : "bg-black hover:bg-gray-900"
-        }`}
-      >
-        {submitting ? "Memproses..." : "Bayar Sekarang"}
-      </button>
-
-      <p className="text-xs text-gray-400 mt-3">Endpoint: {API_BASE}/checkout</p>
     </div>
   );
 }
