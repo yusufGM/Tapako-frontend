@@ -9,7 +9,7 @@ const formatIDR = (n = 0) =>
     .format(Math.max(0, Number(n) || 0))
     .replace(/\s/g, "");
 
-function CheckoutPage() {
+export default function CheckoutPage() {
   const { cart, clearCart } = useCartStore();
   const { token, username: storeUsername, email: storeEmail } = useUserStore();
 
@@ -91,21 +91,17 @@ function CheckoutPage() {
       });
 
       let data = null;
-      try {
-        data = await res.json();
-      } catch {}
+      try { data = await res.json(); } catch {}
 
       if (res.status === 401) {
         alert("Sesi login berakhir. Silakan login lagi.");
         return;
       }
-
       if (!res.ok) {
         const message = data?.error || data?.message || `Checkout gagal (HTTP ${res.status}).`;
         alert(message);
         return;
       }
-
       if (!redirectToPayment(data)) {
         alert("URL pembayaran tidak ditemukan di respons server.");
       }
@@ -118,7 +114,7 @@ function CheckoutPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 pt-24">
+    <div className="max-w-2xl mx-auto px-6 pt-24 pb-10">
       <h1 className="text-2xl font-bold mb-6">Checkout</h1>
 
       <div className="mb-4">
@@ -127,8 +123,8 @@ function CheckoutPage() {
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full p-2 border rounded"
-          placeholder="Masukkan nama Anda"
+          className="w-full h-10 px-3 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
+          placeholder="Nama lengkap"
           required
         />
       </div>
@@ -139,8 +135,8 @@ function CheckoutPage() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 border rounded"
-          placeholder="contoh@email.com"
+          className="w-full h-10 px-3 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
+          placeholder="bob@contoh.com"
           required
         />
       </div>
@@ -153,20 +149,20 @@ function CheckoutPage() {
           pattern="0\\d{8,15}"
           value={phone}
           onChange={(e) => setPhone(e.target.value.replace(/[^\\d]/g, ""))}
-          className="w-full p-2 border rounded"
+          className="w-full h-10 px-3 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
           placeholder="08xxxxxxxxxx"
           required
         />
         <p className="text-xs text-gray-500 mt-1">Format: 0 di depan, 9–16 digit (contoh: 08**********)</p>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-6">
         <label className="block mb-1 font-semibold">Alamat Pengiriman</label>
         <textarea
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          className="w-full p-2 border rounded"
-          rows={3}
+          className="w-full px-3 py-2 border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-black"
+          rows={4}
           required
         />
       </div>
@@ -193,8 +189,8 @@ function CheckoutPage() {
       <button
         onClick={handlePayment}
         disabled={submitting || !cart.length}
-        className={`w-full text-white py-2 rounded transition ${
-          submitting || !cart.length ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+        className={`w-full h-10 text-white rounded transition ${
+          submitting || !cart.length ? "bg-black/60 cursor-not-allowed" : "bg-black hover:bg-gray-900"
         }`}
       >
         {submitting ? "Memproses..." : "Bayar Sekarang"}
@@ -204,4 +200,3 @@ function CheckoutPage() {
     </div>
   );
 }
-export default CheckoutPage
