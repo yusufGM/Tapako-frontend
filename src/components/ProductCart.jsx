@@ -24,7 +24,7 @@ const ProductCart = ({ category, limit = 12 }) => {
         }
         setItems(filtered.slice(0, limit));
       })
-      .catch((err) => console.error("GET /items error:", err));
+      .catch(() => {});
   }, [category, limit]);
 
   const handleAddToCart = (item) => {
@@ -108,20 +108,12 @@ const ProductCart = ({ category, limit = 12 }) => {
                 key={item._id || idx}
                 item={item}
                 onAdd={() => handleAddToCart(item)}
-                index={idx + 1}
               />
             ))}
           </div>
 
-          {/* Fade pinggir kiri */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 
-                          bg-gradient-to-l from-transparent to-white/90 
-                          opacity-0 group-hover:opacity-100 transition" />
-
-          {/* Fade pinggir kanan */}
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 
-                          bg-gradient-to-r from-transparent to-white/90 
-                          opacity-0 group-hover:opacity-100 transition" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-l from-transparent to-white/90 opacity-0 group-hover:opacity-100 transition" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-r from-transparent to-white/90 opacity-0 group-hover:opacity-100 transition" />
 
           <ArrowButton side="left" onClick={() => scrollByCard(-1)} />
           <ArrowButton side="right" onClick={() => scrollByCard(1)} />
@@ -180,9 +172,7 @@ const ArrowButton = ({ side = "left", onClick }) => {
   const icon = isLeft ? "‹" : "›";
 
   return (
-    <div
-      className={`pointer-events-none hidden md:block absolute ${pos} top-1/2 -translate-y-1/2 z-10`}
-    >
+    <div className={`pointer-events-none hidden md:block absolute ${pos} top-1/2 -translate-y-1/2 z-10`}>
       <button
         onClick={onClick}
         className="pointer-events-auto relative w-[120px] h-[120px] -mx-4 -my-10 rounded-full bg-transparent"
