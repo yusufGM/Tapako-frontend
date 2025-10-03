@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense, lazy, useEffect } from 'react';
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
@@ -36,20 +36,20 @@ const Spinner = () => (
 );
 
 export default function App() {
-  const location = useLocation();
   const closeDrawer = useCartStore((s) => s.closeDrawer);
+  const isAdminRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
 
   useEffect(() => {
     closeDrawer();
-  }, [location.pathname, closeDrawer]);
+  }, [closeDrawer]);
 
   return (
     <Suspense fallback={<Spinner />}>
       <ScrollToTop />
-      <Header className="sticky top-0 z-50 isolate" />
-      <CartDrawer />
+      {!isAdminRoute && <Header className="sticky top-0 z-50 isolate" />}
+      {!isAdminRoute && <CartDrawer />}
 
-      <div className="min-h-screen pt-24">
+      <div className={isAdminRoute ? 'min-h-screen' : 'min-h-screen pt-24'}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
@@ -66,6 +66,7 @@ export default function App() {
           <Route path="/store" element={<StorePage />} />
           <Route path="/sale" element={<SalePage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" />} />
           <Route
             path="/admin/dashboard"
             element={
@@ -78,7 +79,7 @@ export default function App() {
         </Routes>
       </div>
 
-      <Footer />
+      {!isAdminRoute && <Footer />}
       <Toaster position="top-center" richColors closeButton />
     </Suspense>
   );
