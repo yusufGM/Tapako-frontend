@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Suspense, lazy, useEffect } from 'react';
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
@@ -16,7 +16,11 @@ const SignUp = lazy(() => import('./pages/SignUp.jsx'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage.jsx'));
 const StorePage = lazy(() => import('./pages/StorePage.jsx'));
 const SalePage = lazy(() => import('./pages/SalePage.jsx'));
+
+const AdminLayout = lazy(() => import('./pages/Admin/AdminLayout.jsx'));
 const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard.jsx'));
+const Orders = lazy(() => import('./pages/Admin/Orders.jsx'));
+const Products = lazy(() => import('./pages/Admin/Products.jsx'));
 
 function PrivateRoute({ children }) {
   const { token } = useUserStore();
@@ -25,8 +29,7 @@ function PrivateRoute({ children }) {
 
 function AdminRoute({ children }) {
   const { token, role } = useUserStore();
-  const isAdmin = role === 'admin';
-  return token && isAdmin ? children : <Navigate to="/login" />;
+  return token && role === 'admin' ? children : <Navigate to="/login" />;
 }
 
 const Spinner = () => (
@@ -37,7 +40,8 @@ const Spinner = () => (
 
 export default function App() {
   const closeDrawer = useCartStore((s) => s.closeDrawer);
-  const isAdminRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   useEffect(() => {
     closeDrawer();
@@ -54,6 +58,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUp />} />
+
           <Route
             path="/checkout"
             element={
@@ -62,19 +67,19 @@ export default function App() {
               </PrivateRoute>
             }
           />
+
           <Route path="/success" element={<SuccessPage />} />
           <Route path="/store" element={<StorePage />} />
           <Route path="/sale" element={<SalePage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/admin" element={<Navigate to="/admin/dashboard" />} />
-          <Route
-            path="/admin/dashboard"
-            element={
-              <AdminRoute>
-                <AdminDashboard />
-              </AdminRoute>
-            }
-          />
+
+          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="products" element={<Products />} />
+          </Route>
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

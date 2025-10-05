@@ -1,21 +1,45 @@
+import { NavLink, Outlet } from "react-router-dom";
 import AdminHeader from "./AdminHeader";
 
-export default function AdminLayout({ children }) {
+function MenuLink({ to, children, end }) {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <NavLink
+      to={to}
+      end={end}
+      className={({ isActive }) =>
+        `block w-full text-left px-4 py-2 rounded-lg transition ${
+          isActive
+            ? "bg-white/10 text-white"
+            : "text-gray-300 hover:text-white hover:bg-white/10"
+        }`
+      }
+    >
+      {children}
+    </NavLink>
+  );
+}
+
+export default function AdminLayout() {
+  return (
+    <div className="min-h-screen bg-gray-50">
       <AdminHeader />
-      <div className="mx-auto grid max-w-7xl grid-cols-12 gap-6 px-4 py-6">
-        <aside className="col-span-12 md:col-span-3 lg:col-span-3">
-          <div className="rounded-2xl bg-slate-900 p-3 text-slate-100">
-            <div className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Menu</div>
-            <ul className="space-y-1">
-              <li><a className="block rounded-xl bg-white/10 px-3 py-2" href="/admin/dashboard">Dashboard</a></li>
-              <li><a className="block rounded-xl px-3 py-2 hover:bg-white/10" href="/admin/orders">Orders</a></li>
-              <li><a className="block rounded-xl px-3 py-2 hover:bg-white/10" href="/admin/products">Products</a></li>
-            </ul>
-          </div>
-        </aside>
-        <main className="col-span-12 md:col-span-9 lg:col-span-9">{children}</main>
+      <div className="pt-20 px-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-6">
+          <aside className="bg-[#0b1424] text-white rounded-2xl p-4">
+            <div className="text-xs uppercase tracking-widest text-gray-400 px-2 mb-2">
+              Menu
+            </div>
+            <div className="space-y-2">
+              <MenuLink to="/admin/dashboard" end>Dashboard</MenuLink>
+              <MenuLink to="/admin/orders" end>Orders</MenuLink>
+              <MenuLink to="/admin/products" end>Products</MenuLink>
+            </div>
+          </aside>
+
+          <main className="pb-10">
+            <Outlet />
+          </main>
+        </div>
       </div>
     </div>
   );
