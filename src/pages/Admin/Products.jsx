@@ -1,5 +1,4 @@
 import { useState } from "react";
-import AdminLayout from "./AdminLayout";
 
 export default function Products() {
   const [products, setProducts] = useState([
@@ -14,7 +13,7 @@ export default function Products() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <h1 className="text-2xl font-bold mb-6">Products</h1>
       <table className="w-full bg-white rounded shadow mb-6">
         <thead>
@@ -76,6 +75,6 @@ export default function Products() {
           Add Product
         </button>
       </div>
-    </AdminLayout>
+      </>
   );
 }

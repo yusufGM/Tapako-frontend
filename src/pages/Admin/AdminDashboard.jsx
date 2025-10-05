@@ -1,49 +1,31 @@
-import AdminLayout from "./AdminLayout";
-
-function Stat({ label, value }) {
-  return (
-    <div className="rounded-lg border bg-white p-4 shadow-sm">
-      <div className="text-sm text-slate-500">{label}</div>
-      <div className="mt-2 text-3xl font-semibold">{value}</div>
-    </div>
-  );
-}
-
 export default function AdminDashboard() {
   return (
-    <AdminLayout>
-      <h1 className="mb-6 text-2xl font-bold">Dashboard</h1>
-      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Stat label="Total Sales" value="$15,230" />
-        <Stat label="Orders" value="254" />
-        <Stat label="Products" value="32" />
-        <Stat label="Customers" value="1,208" />
-      </div>
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold">Sales Overview</h2>
-          <div className="h-64 grid place-items-center text-slate-400">
-            <span>Chart placeholder</span>
-          </div>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold">Dashboard</h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="border rounded-xl p-4">
+          <div className="text-sm text-gray-500">Total Sales</div>
+          <div className="text-3xl font-semibold mt-1">$15,230</div>
         </div>
-        <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold">Customers</h2>
-          <div className="space-y-3 text-sm">
-            <div className="flex items-center justify-between">
-              <span>Sales</span>
-              <span>2.00</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Products</span>
-              <span>32</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Customers</span>
-              <span>1,208</span>
-            </div>
-          </div>
+        <div className="border rounded-xl p-4">
+          <div className="text-sm text-gray-500">Orders</div>
+          <div className="text-3xl font-semibold mt-1">254</div>
+        </div>
+        <div className="border rounded-xl p-4">
+          <div className="text-sm text-gray-500">Products</div>
+          <div className="text-3xl font-semibold mt-1">32</div>
+        </div>
+        <div className="border rounded-xl p-4">
+          <div className="text-sm text-gray-500">Customers</div>
+          <div className="text-3xl font-semibold mt-1">1,208</div>
         </div>
       </div>
-    </AdminLayout>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="border rounded-xl p-4 h-64">Sales Overview</div>
+        <div className="border rounded-xl p-4 h-64">Customers</div>
+      </div>
+    </div>
   );
 }

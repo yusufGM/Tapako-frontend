@@ -1,26 +1,34 @@
 import { useEffect, useState } from "react";
+import useUserStore from "../../components/store/useUserStore";
 
-export function useSoldCount() {
-  const [sold, setSold] = useState(0);
-  const [loading, setLoading] = useState(true);
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 
-  async function fetchSold() {
-    try {
-      const res = await fetch("/api/stats/sold-count");
-      if (!res.ok) throw new Error("Failed");
-      const data = await res.json();
-      setSold(data?.sold ?? 0);
-    } catch (_) {
-    } finally {
-      setLoading(false);
-    }
-  }
+export default function useSoldCount() {
+  const { token } = useUserStore();
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
-    fetchSold();
-    const t = setInterval(fetchSold, 10000);
-    return () => clearInterval(t);
-  }, []);
+    let on = true;
+    if (!token) return;
 
-  return { sold, loading };
+    fetch(`${API_BASE}/orders`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(async (r) => (r.ok ? r.json() : []))
+      .then((orders) => {
+        if (!on) return;
+        const total = Array.isArray(orders)
+          ? orders.reduce(
+              (sum, o) => sum + (o.items || []).reduce((s, it) => s + (it.qty || 0), 0),
+              0
+            )
+          : 0;
+        setCount(total);
+      })
+      .catch(() => {});
+
+    return () => {
+      on = false;
+    };
+  }, [token]);
+
+  return count;
 }

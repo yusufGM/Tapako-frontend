@@ -8,9 +8,7 @@ function MenuLink({ to, children, end }) {
       end={end}
       className={({ isActive }) =>
         `block w-full text-left px-4 py-2 rounded-lg transition ${
-          isActive
-            ? "bg-white/10 text-white"
-            : "text-gray-300 hover:text-white hover:bg-white/10"
+          isActive ? "bg-white/10 text-white" : "text-gray-300 hover:text-white hover:bg-white/10"
         }`
       }
     >
@@ -26,9 +24,7 @@ export default function AdminLayout() {
       <div className="pt-20 px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-6">
           <aside className="bg-[#0b1424] text-white rounded-2xl p-4">
-            <div className="text-xs uppercase tracking-widest text-gray-400 px-2 mb-2">
-              Menu
-            </div>
+            <div className="text-xs uppercase tracking-widest text-gray-400 px-2 mb-2">Menu</div>
             <div className="space-y-2">
               <MenuLink to="/admin/dashboard" end>Dashboard</MenuLink>
               <MenuLink to="/admin/orders" end>Orders</MenuLink>
