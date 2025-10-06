@@ -13,7 +13,7 @@ export default function Products() {
   };
 
   return (
-    <>
+    <div>
       <h1 className="text-2xl font-bold mb-6">Products</h1>
       <table className="w-full bg-white rounded shadow mb-6">
         <thead>
@@ -75,6 +75,6 @@ export default function Products() {
           Add Product
         </button>
       </div>
-      </>
+    </div>
   );
 }

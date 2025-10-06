@@ -1,45 +1,62 @@
-import { NavLink, Outlet } from "react-router-dom";
-import AdminHeader from "./AdminHeader";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useUserStore from "../../components/store/useUserStore";
+import useCartStore from "../../components/store/useCartStore";
 
-function MenuLink({ to, children, end }) {
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
+
+export default function AdminHeader() {
+  const navigate = useNavigate();
+  const { username, token, clearUser } = useUserStore();
+  const { clearCart } = useCartStore();
+  const [sold, setSold] = useState(0);
+
+  useEffect(() => {
+    let on = true;
+    if (!token) return;
+    fetch(`${API_BASE}/orders`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(async r => (r.ok ? r.json() : []))
+      .then(orders => {
+        if (!on || !Array.isArray(orders)) return;
+        const total = orders.reduce((s, o) => s + (o.items || []).reduce((a, it) => a + (it.qty || 0), 0), 0);
+        setSold(total);
+      })
+      .catch(() => {});
+    return () => { on = false; };
+  }, [token]);
+
+  const handleLogout = () => {
+    clearUser();
+    clearCart();
+    navigate("/login", { replace: true });
+  };
+
   return (
-    <NavLink
-      to={to}
-      end={end}
-      className={({ isActive }) =>
-        `block w-full text-left px-4 py-2 rounded-lg transition ${
-          isActive ? "bg-white/10 text-white" : "text-gray-300 hover:text-white hover:bg-white/10"
-        }`
-      }
-    >
-      {children}
-    </NavLink>
-  );
-}
-
-export default function AdminLayout() {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader />
-
-      <div className="pt-20 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-[288px_1fr] gap-6 items-start">
-          <aside className="md:sticky md:top-24 md:h-[calc(100vh-7rem)] md:w-72 shrink-0">
-            <div className="bg-[#0b1424] text-white rounded-2xl p-4 h-full overflow-y-auto">
-              <div className="text-xs uppercase tracking-widest text-gray-400 px-2 mb-2">Menu</div>
-              <div className="space-y-2">
-                <MenuLink to="/admin/dashboard" end>Dashboard</MenuLink>
-                <MenuLink to="/admin/orders" end>Orders</MenuLink>
-                <MenuLink to="/admin/products" end>Products</MenuLink>
-              </div>
-            </div>
-          </aside>
-
-          <main className="pb-10">
-            <Outlet />
-          </main>
+    <header className="fixed top-0 left-0 right-0 bg-white border-b z-50">
+      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="inline-block h-3 w-3 bg-black rounded-sm" />
+          <span className="font-semibold">Tapako Admin</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-2 text-sm">
+            <span className="text-gray-500">Products sold</span>
+            <span className="inline-flex items-center justify-center h-6 min-w-6 px-2 rounded-md bg-[#0b1424] text-white text-xs font-semibold">
+              {sold}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-700">Hi, {username}</span>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="px-3 py-1.5 rounded-md bg-red-600 text-white text-sm hover:bg-red-700"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 }

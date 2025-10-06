@@ -21,6 +21,7 @@ const AdminLayout = lazy(() => import('./pages/Admin/AdminLayout.jsx'));
 const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard.jsx'));
 const Orders = lazy(() => import('./pages/Admin/Orders.jsx'));
 const Products = lazy(() => import('./pages/Admin/Products.jsx'));
+const ErrorBoundary = lazy(() => import('./pages/Admin/ErrorBoundary.jsx'));
 
 function PrivateRoute({ children }) {
   const { token } = useUserStore();
@@ -58,22 +59,13 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUp />} />
-
-          <Route
-            path="/checkout"
-            element={
-              <PrivateRoute>
-                <CheckoutPage />
-              </PrivateRoute>
-            }
-          />
-
+          <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
           <Route path="/success" element={<SuccessPage />} />
           <Route path="/store" element={<StorePage />} />
           <Route path="/sale" element={<SalePage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
 
-          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+          <Route path="/admin" element={<AdminRoute><ErrorBoundary><AdminLayout /></ErrorBoundary></AdminRoute>}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="orders" element={<Orders />} />

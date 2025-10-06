@@ -21,14 +21,17 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminHeader />
+
       <div className="pt-20 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-6">
-          <aside className="bg-[#0b1424] text-white rounded-2xl p-4">
-            <div className="text-xs uppercase tracking-widest text-gray-400 px-2 mb-2">Menu</div>
-            <div className="space-y-2">
-              <MenuLink to="/admin/dashboard" end>Dashboard</MenuLink>
-              <MenuLink to="/admin/orders" end>Orders</MenuLink>
-              <MenuLink to="/admin/products" end>Products</MenuLink>
+        <div className="grid grid-cols-1 md:grid-cols-[288px_1fr] gap-6 items-start">
+          <aside className="md:sticky md:top-24 md:h-[calc(100vh-7rem)] md:w-72 shrink-0">
+            <div className="bg-[#0b1424] text-white rounded-2xl p-4 h-full overflow-y-auto">
+              <div className="text-xs uppercase tracking-widest text-gray-400 px-2 mb-2">Menu</div>
+              <div className="space-y-2">
+                <MenuLink to="/admin/dashboard" end>Dashboard</MenuLink>
+                <MenuLink to="/admin/orders" end>Orders</MenuLink>
+                <MenuLink to="/admin/products" end>Products</MenuLink>
+              </div>
             </div>
           </aside>
 

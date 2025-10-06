@@ -18,9 +18,7 @@ export default function AdminOrders() {
     let on = true;
     setLoading(true);
     setErr(null);
-    fetch(`${API_BASE}/orders`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    fetch(`${API_BASE}/orders`, { headers: { Authorization: `Bearer ${token}` } })
       .then(async (r) => {
         const data = await r.json().catch(() => []);
         if (!r.ok) throw new Error(data?.error || "Gagal memuat orders");
