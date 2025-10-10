@@ -9,30 +9,17 @@ const AdminAddProduct = () => {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Sepatu');
   const [loading, setLoading] = useState(false);
-
   const { token } = useUserStore();
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const newItem = {
-      name: title,
-      imgSrc: image,
-      price: parseFloat(price),
-      description,
-      category,
-    };
-
+    const newItem = { name: title, imgSrc: image, price: parseFloat(price), description, category };
     try {
       setLoading(true);
-      await apiPost('/items', newItem, { headers: { ...authHeader } });
+      await apiPost('/admin/items', newItem, { headers: { ...authHeader } });
       alert('Produk berhasil ditambahkan');
-      setTitle('');
-      setImage('');
-      setPrice('');
-      setDescription('');
-      setCategory('Sepatu');
+      setTitle(''); setImage(''); setPrice(''); setDescription(''); setCategory('Sepatu');
     } catch (err) {
       alert(err?.payload?.error || err.message || 'Gagal menambahkan produk');
     } finally {

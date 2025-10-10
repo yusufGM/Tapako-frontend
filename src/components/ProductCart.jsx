@@ -16,7 +16,7 @@ const ProductCart = ({ category, limit = 12 }) => {
     api
       .get("/items")
       .then((data) => {
-        let filtered = data || [];
+        let filtered = data;
         if (category) {
           filtered = filtered.filter(
             (item) => item.category?.toLowerCase() === category.toLowerCase()
@@ -50,7 +50,7 @@ const ProductCart = ({ category, limit = 12 }) => {
     if (!el) return;
     if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) {
       el.scrollLeft += e.deltaY;
-      if (e.cancelable) e.preventDefault();
+      e.preventDefault();
       e.stopPropagation();
     }
   };
@@ -70,7 +70,7 @@ const ProductCart = ({ category, limit = 12 }) => {
     const x = (e.touches?.[0]?.clientX ?? e.clientX) || 0;
     const dx = x - startX.current;
     el.scrollLeft = scrollStart.current - dx;
-    if (e.cancelable) e.preventDefault();
+    e.preventDefault();
     e.stopPropagation();
   };
 
@@ -93,12 +93,7 @@ const ProductCart = ({ category, limit = 12 }) => {
         <div className="relative z-0 group">
           <div
             ref={rowRef}
-            className="row-hide-scrollbar flex gap-4 overflow-x-auto scroll-smooth select-none"
-            style={{
-              touchAction: "pan-x",
-              overscrollBehaviorX: "contain",
-              overscrollBehaviorY: "none",
-            }}
+            className="row-snap row-hide-scrollbar row-scroll-lock flex gap-4 overflow-x-auto scroll-smooth select-none"
             onWheel={onWheel}
             onMouseDown={onPointerDown}
             onMouseMove={onPointerMove}

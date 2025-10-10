@@ -23,7 +23,8 @@ const LoginPage = () => {
         email: data.user?.email,
       });
       toast.success("Login berhasil");
-      navigate("/");
+      const isAdmin = (data.user?.role || "user") === "admin";
+      navigate(isAdmin ? "/admin/dashboard" : "/", { replace: true });
     } catch (err) {
       toast.error(err?.payload?.error || "Login gagal");
     }
@@ -31,17 +32,11 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-8 rounded shadow-md w-full max-w-sm"
-      >
+      <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
         <div className="mb-4">
-          <label
-            htmlFor="identifier"
-            className="block text-sm font-semibold mb-1"
-          >
+          <label htmlFor="identifier" className="block text-sm font-semibold mb-1">
             Username atau Email
           </label>
           <input
@@ -81,10 +76,7 @@ const LoginPage = () => {
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition"
-        >
+        <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition">
           Login
         </button>
 
