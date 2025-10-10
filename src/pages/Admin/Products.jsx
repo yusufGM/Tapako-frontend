@@ -148,7 +148,7 @@ function EditModal({ item, onClose, onSaved }) {
 
 export default function Products() {
   const { token } = useUserStore();
-  const [openAdd, setOpenAdd] = useState(true);
+  const [openAdd, setOpenAdd] = useState(false);
 
   const [rows, setRows] = useState([]);
   const [total, setTotal] = useState(0);
